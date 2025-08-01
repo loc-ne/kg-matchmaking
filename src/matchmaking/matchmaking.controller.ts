@@ -11,9 +11,9 @@ export class MatchmakingController {
   @UseGuards(OptionalAuthGuard)
   async joinQueue(@Request() req, @Body() dto: JoinQueueDto) {
     let playerData;
-
+    console.log('Cookies:', req.cookies);
     if (req.user) {
-      // ✅ Authenticated user
+      console.log('Not req user');
       const response = await fetch(`${process.env.AUTH_SERVICE_URL}/api/v1/users/${req.user.sub}/elo/${dto.timeControl.type}`);
       const data = await response.json(); // { elo: ... }
       playerData = {
