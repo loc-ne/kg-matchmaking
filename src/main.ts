@@ -21,7 +21,7 @@ app.enableCors({
 
   const port = process.env.PORT || 3001;
   console.log(`Loaded PORT from .env: ${process.env.PORT}`);
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Matchmaking Service is running on port ${port}`);
 }
 bootstrap();
