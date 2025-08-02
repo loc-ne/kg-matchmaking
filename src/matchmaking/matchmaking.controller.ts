@@ -21,6 +21,7 @@ export class MatchmakingController {
         timeControl: dto.timeControl,
         isGuest: false
       };
+      console.log('playerData:', playerData);
     } else {
       if (!dto.guestName) {
         throw new BadRequestException('Guest name is required for non-authenticated users');
@@ -32,7 +33,7 @@ export class MatchmakingController {
         isGuest: true
       };
     }
-
+    
     return this.matchmakingService.joinQueue(playerData);
   }
   @Post('queue/leave')
