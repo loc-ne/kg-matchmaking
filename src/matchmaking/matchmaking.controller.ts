@@ -10,7 +10,7 @@ export class MatchmakingController {
   @Post('queue/join')
   async joinQueue(@Body() dto: JoinQueueDto) {
     let playerData;
-
+    console.log('dtoData:', dto);
     if (dto.user && dto.user.sub && dto.user.username) {
       const response = await fetch(`${process.env.AUTH_SERVICE_URL}/api/v1/users/${dto.user.sub}/elo/${dto.timeControl.type}`);
       const data = await response.json();
