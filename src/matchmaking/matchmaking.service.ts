@@ -180,6 +180,7 @@ export class MatchmakingService {
     // ✅ NEW: Call Auth Service API instead of direct DB access
     private async getUserBalanceColor(userId: string, timeControl: TimeControl): Promise<number> {
         try {
+            this.logger.log(`Calling Auth Service with userId: ${userId}, timeControl: ${JSON.stringify(timeControl)}`);
             const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:4001';
             // ✅ Use timeControl.type instead of mapping
 
