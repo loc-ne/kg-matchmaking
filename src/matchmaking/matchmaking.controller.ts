@@ -8,27 +8,23 @@ export class MatchmakingController {
   constructor(private matchmakingService: MatchmakingService) { }
 
   @Post('queue/join')
-  @UseGuards(OptionalAuthGuard)
-  async joinQueue(@Request() req, @Body() dto: JoinQueueDto) {
+  async joinQueue(@Body() dto: JoinQueueDto) {
     let playerData;
-    console.log('Cookies:', req.cookies);
-    if (req.user) {
-      console.log('Not req user');
-      const response = await fetch(`${process.env.AUTH_SERVICE_URL}/api/v1/users/${req.user.sub}/elo/${dto.timeControl.type}`);
-      const data = await response.json(); // { elo: ... }
+
+    if (dto.user && dto.user.sub && dto.user.username) {
+      const response = await fetch(`${process.env.AUTH_SERVICE_URL}/api/v1/users/${dto.user.sub}/elo/${dto.timeControl.type}`);
+      const data = await response.json();
       playerData = {
-        userId: req.user.sub,
-        username: req.user.username,
+        userId: dto.user.sub,
+        username: dto.user.username,
         rating: data.elo,
         timeControl: dto.timeControl,
         isGuest: false
       };
     } else {
-      // ✅ Guest user
       if (!dto.guestName) {
         throw new BadRequestException('Guest name is required for non-authenticated users');
       }
-
       playerData = {
         userId: `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         username: dto.guestName,
@@ -39,11 +35,9 @@ export class MatchmakingController {
 
     return this.matchmakingService.joinQueue(playerData);
   }
-
   @Post('queue/leave')
-  @UseGuards(OptionalAuthGuard) // ✅ Use custom guard
+  @UseGuards(OptionalAuthGuard) 
   async leaveQueue(@Request() req, @Body() body: { guestId?: string }) {
-    // ✅ Get userId from JWT or request body for guests
     const userId = req.user?.sub || body.guestId;
 
     if (!userId) {
@@ -54,9 +48,8 @@ export class MatchmakingController {
   }
 
   @Get('queue/status')
-  @UseGuards(OptionalAuthGuard) // ✅ Use custom guard
+  @UseGuards(OptionalAuthGuard) 
   async getQueueStatus(@Request() req) {
-    // ✅ Get userId from JWT or query params for guests
     const userId = req.user?.sub || req.query.guestId;
 
     if (!userId) {
